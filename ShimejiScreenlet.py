@@ -49,6 +49,7 @@ class ShimejiScreenlet (screenlets.Screenlet):
     def on_init(self):
         print "Screenlet has been initialized."
         self.add_default_menuitems()
+
     
     def on_draw(self, ctx):
         list_possible = ["shime1", "shime1a", "shime1b", "shime7", "shime9", "shime20", "shime30", "shime11"]
@@ -61,11 +62,34 @@ class ShimejiScreenlet (screenlets.Screenlet):
             print "random number is ", random_number
             self.theme.render(ctx, list_possible[random_number])
             print "drawing now"
-            
+    
     def on_draw_shape(self, ctx):
         #simple call drawing handler and pass shape-context
         self.on_draw(ctx)
+        
+    def draw_idle(self, ctx, image):
+        ctx.set_operator(cairo.OPERATOR_CLEAR)
+        ctx.fill()
+        ctx.set_operator(cairo.OPERATOR_OVER)
+        ctx.scale(self.scale, self.scale)
+        self.theme.render(ctx, image)
+        print "drawed"
+        
+    
+    def idle(self):
+        idle_list_forwards = ["shime1", "shime1a", "shime1b", "shime2", "shime3"]
+        idle_list_backwards = idle_list_forwards[::-1]
+        idle = idle_list_forwards + idle_list_backwards
+        for i in idle:
+            self.draw_idle(i)
+            sleep(1)
+            
+    def on_unfocus (self, event):
+        """Called when the Screenlet's window loses focus."""
+        self.idle()
 
+
+        
 if __name__ == "__main__":
     #creates new session
     import screenlets.session
